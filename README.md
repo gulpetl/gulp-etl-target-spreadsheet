@@ -1,6 +1,6 @@
 # gulp-etl-target-spreadsheet #
 
-This plugin creates spreadsheet files from **gulp-etl** **Message Stream** files; originally adapted from the [gulp-etl-handlelines](https://github.com/gulpetl/gulp-etl-handlelines) model plugin. It is a **gulp-etl** wrapper for [xlsx](https://docs.sheetjs.com/#sheetjs-js-xlsx)
+This plugin creates spreadsheet files from **gulp-etl** **Message Stream** files; originally adapted from the [gulp-etl-handlelines](https://github.com/gulpetl/gulp-etl-handlelines) model plugin. It is a **gulp-etl** wrapper for [xlsx](https://www.npmjs.com/package/xlsx)
 
 This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp](https://gulpjs.com/) plugin. **gulp-etl** plugins work with [ndjson](http://ndjson.org/) data streams/files which we call **Message Streams** and which are compliant with the [Singer specification](https://github.com/singer-io/getting-started/blob/master/docs/SPEC.md#output). Message Streams look like this:
 
@@ -15,7 +15,7 @@ This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp
 
 ### Usage
 **gulp-etl** plugins accept a configObj as the first parameter; the configObj
-will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://docs.sheetjs.com/#sheetjs-js-xlsx), described [here](https://docs.sheetjs.com/#writing-options). Within these options [bookType](https://www.npmjs.com/package/xlsx#output-type) and [type](https://www.npmjs.com/package/xlsx#output-type) are necessary to run properly. Defaults are coded in, xlsx for the bookType and buffer for the type. 
+will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), described [here](https://www.npmjs.com/package/xlsx#writing-options). Within these options [bookType](https://www.npmjs.com/package/xlsx#output-type) and [type](https://www.npmjs.com/package/xlsx#output-type) are necessary to run properly. Defaults are coded in, xlsx for the bookType and buffer for the type. 
 ##### Sample gulpfile.js
 ```
 var gulp = require('gulp')
