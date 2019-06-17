@@ -1,5 +1,7 @@
 const through2 = require('through2')
 import Vinyl = require('vinyl')
+const split = require('split2')
+import XLSX = require('xlsx')
 import PluginError = require('plugin-error');
 const pkginfo = require('pkginfo')(module); // project package.json info into module.exports
 const PLUGIN_NAME = module.exports.name;
@@ -7,139 +9,70 @@ import * as loglevel from 'loglevel'
 const log = loglevel.getLogger(PLUGIN_NAME) // get a logger instance based on the project name
 log.setLevel((process.env.DEBUG_LEVEL || 'warn') as log.LogLevelDesc)
 
-const stringify = require('csv-stringify')
-const split = require('split2')
+export function targetSpreadsheet(configObj:any){
+    if (!configObj) configObj = {}
+    if (!configObj.bookType) configObj.bookType = "xlsx"
+    if (!configObj.type) configObj.type = "buffer"
 
-/** wrap incoming recordObject in a Singer RECORD Message object*/
-function createRecord(recordObject:Object, streamName: string) : any {
-  return {type:"RECORD", stream:streamName, record:recordObject}
-}
+    const strm = through2.obj(function (file: Vinyl, encoding: string, callback: Function) {
+        let returnErr= null
 
-/* This is a gulp-etl plugin. It is compliant with best practices for Gulp plugins (see
-https://github.com/gulpjs/gulp/blob/master/docs/writing-a-plugin/guidelines.md#what-does-a-good-plugin-look-like ),
-and like all gulp-etl plugins it accepts a configObj as its first parameter */
-export function targetCsv(configObj: any) {
-  if (!configObj) configObj = {}
-//  if (!configObj.columns) configObj.columns = true // we don't allow false for columns; it results in arrays instead of objects for each record
-
-  // creating a stream through which each file will pass - a new instance will be created and invoked for each file 
-  // see https://stackoverflow.com/a/52432089/5578474 for a note on the "this" param
-  const strm = through2.obj(function (this: any, file: Vinyl, encoding: string, cb: Function) {
-    const self = this
-    let returnErr: any = null
-    let stringifier
-    try {
-      stringifier = stringify(configObj)
-    }
-    catch (err) {
-      returnErr = new PluginError(PLUGIN_NAME, err);
-    }
-
-    // preprocess line object
-    const handleLine = (lineObj: any, _streamName : string): object | null => {
-      lineObj = lineObj.record
-      return lineObj
-    }
-
-    function newTransformer(streamName : string) {
-
-      let transformer = through2.obj(); // new transform stream, in object mode
-  
-      // transformer is designed to follow split2, which emits one line at a time, so dataObj is an Object. We will finish by converting dataObj to a text line
-      transformer._transform = function (dataLine: string, encoding: string, callback: Function) {
-        let returnErr: any = null
-        try {
-          let dataObj
-          if (dataLine.trim() != "") dataObj = JSON.parse(dataLine)
-          let handledObj = handleLine(dataObj, streamName)
-          if (handledObj) {
-            let handledLine = JSON.stringify(handledObj)
-            log.debug(handledLine)
-            this.push(handledObj);
-          }
-        } catch (err) {
-          returnErr = new PluginError(PLUGIN_NAME, err);
+        if(file.isNull() || returnErr){
+            //return empty file or if there is an error
+            return callback(returnErr, file)
         }
-  
-        callback(returnErr)
-      }
-  
-      return transformer
-    }
-
-    // set the stream name to the file name (without extension)
-    let streamName : string = file.stem
-
-    if (file.isNull() || returnErr) {
-      // return empty file
-      return cb(returnErr, file)
-    }
-    else if (file.isBuffer()) {
-      try {
-        const linesArray = (file.contents as Buffer).toString().split('\n')
-        let tempLine: any
-        let resultArray = [];
-        // we'll call handleLine on each line
-        for (let dataIdx in linesArray) {
-          try {
-            if (linesArray[dataIdx].trim() == "") continue
-            let lineObj = JSON.parse(linesArray[dataIdx])
-            tempLine = handleLine(lineObj, streamName)
-            if (tempLine){
-              let tempStr = JSON.stringify(tempLine)
-              log.debug(tempStr)
-              resultArray.push(tempLine);
+        else if(file.isStream()){
+            throw new PluginError(PLUGIN_NAME,'Does not support streaming')
+        }
+        else if(file.isBuffer()){
+            let linesArr = (file.contents as Buffer).toString().split('\n')
+            let resultArr:any = []
+            let tempObj
+            let streamNames:any =[] 
+            let workbook = XLSX.utils.book_new()
+            for (let lineIdx in linesArr) {
+                let lineObj = JSON.parse(linesArr[lineIdx])
+                tempObj = lineObj.record
+                let stream = lineObj.stream
+                if (!(streamNames.includes(stream))){
+                    streamNames.push(stream)
+                    resultArr.push([])
+                }
+                let streamIdx= streamNames.indexOf(stream)
+                let tempStr = JSON.stringify(tempObj)
+                log.debug(tempStr)
+                resultArr[streamIdx].push(tempObj)
             }
-          } catch (err) {
-            returnErr = new PluginError(PLUGIN_NAME, err);
-          }
+            for(let sheetIdx in streamNames){
+                let tempSheet = XLSX.utils.json_to_sheet(resultArr[sheetIdx])
+                XLSX.utils.book_append_sheet(workbook, tempSheet, streamNames[sheetIdx])
+            }
+            try{
+                var wbout = XLSX.write(workbook,configObj)
+                file.contents = Buffer.from(wbout)
+                switch(configObj.bookType){
+                    case "biff8" :
+                        file.extname = ".xls"
+                        break;
+                    case "biff5":
+                        file.extname = ".xls"
+                        break;
+                    case "biff2":
+                        file.extname = ".xls"
+                        break;
+                    case "xlml":
+                        file.extname = ".xls"
+                        break;
+                    default:
+                        file.extname = "."+ configObj.bookType
+                }
+            }
+            catch(err){
+                returnErr = new PluginError(PLUGIN_NAME, err)
+            }
+            log.debug('calling callback')
+            callback(returnErr, file)
         }
-
-        stringify(resultArray, configObj, function(err:any, data:string){
-          // this callback function runs when the stringify finishes its work, returning an array of CSV lines
-          if (err) returnErr = new PluginError(PLUGIN_NAME, err)
-          else file.contents = Buffer.from(data)
-          
-          // we are done with file processing. Pass the processed file along
-          log.debug('calling callback')    
-          cb(returnErr, file);    
-        })
-      }
-      catch (err) {
-        returnErr = new PluginError(PLUGIN_NAME, err);
-        return cb(returnErr, file)        
-      }
-
-    }
-    else if (file.isStream()) {
-      file.contents = file.contents
-        // split plugin will split the file into lines
-        .pipe(split())
-        .pipe(newTransformer(streamName))
-        .pipe(stringifier)
-        .on('end', function () {
-
-          // DON'T CALL THIS HERE. It MAY work, if the job is small enough. But it needs to be called after the stream is SET UP, not when the streaming is DONE.
-          // Calling the callback here instead of below may result in data hanging in the stream--not sure of the technical term, but dest() creates no file, or the file is blank
-          // cb(returnErr, file);
-          // log.debug('calling callback')    
-
-          log.debug('csv parser is done')
-        })
-        // .on('data', function (data:any, err: any) {
-        //   log.debug(data)
-        // })
-        .on('error', function (err: any) {
-          log.error(err)
-          self.emit('error', new PluginError(PLUGIN_NAME, err));
-        })
-
-      // after our stream is set up (not necesarily finished) we call the callback
-      log.debug('calling callback')    
-      cb(returnErr, file);
-    }
-
-  })
-
-  return strm
+    })
+    return strm
 }
