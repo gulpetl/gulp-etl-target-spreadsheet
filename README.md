@@ -17,6 +17,8 @@ This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp
 **gulp-etl** plugins accept a configObj as the first parameter; the configObj
 will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), described [here](https://www.npmjs.com/package/xlsx#writing-options). [BookType](https://www.npmjs.com/package/xlsx#output-type) is necessary to run properly. [Type](https://www.npmjs.com/package/xlsx#output-type) is also required, but has been hard coded to buffer type.
 The plugin will change the file type within the file according to the bookType entered.
+
+**Warning:** If the input file was tapped from a file type that has multiple sheets, and the bookType chose only allows for single sheets, the plugin will only export the first sheet. A table for bookTypes and their capablitily of handling multiple sheets is described [here](https://www.npmjs.com/package/xlsx#output-type).
 ##### Sample gulpfile.js
 ```
 var gulp = require('gulp')
