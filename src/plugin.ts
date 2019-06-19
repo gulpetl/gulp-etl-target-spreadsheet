@@ -12,7 +12,7 @@ log.setLevel((process.env.DEBUG_LEVEL || 'warn') as log.LogLevelDesc)
 export function targetSpreadsheet(configObj:any){
     if (!configObj) configObj = {}
     if (!configObj.bookType) configObj.bookType = "xlsx"
-    if (!configObj.type) configObj.type = "buffer"
+    configObj.type = "buffer"
 
     const strm = through2.obj(function (file: Vinyl, encoding: string, callback: Function) {
         let returnErr= null

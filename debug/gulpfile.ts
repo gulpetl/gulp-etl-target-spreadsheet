@@ -22,7 +22,7 @@ function runtargetSpreadSheet(callback: any) {
     .on('data', function (file:Vinyl) {
       log.info('Starting processing on ' + file.basename)
     })    
-    .pipe(targetSpreadsheet({bookType : "xlsx", type : "buffer"}))
+    .pipe(targetSpreadsheet({bookType : "xlsx"}))
     .pipe(gulp.dest('../testdata/processed'))
     .on('data', function (file:Vinyl) {
       log.info('Finished processing on ' + file.basename)

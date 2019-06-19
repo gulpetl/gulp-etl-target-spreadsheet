@@ -15,7 +15,8 @@ This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp
 
 ### Usage
 **gulp-etl** plugins accept a configObj as the first parameter; the configObj
-will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), described [here](https://www.npmjs.com/package/xlsx#writing-options). Within these options [bookType](https://www.npmjs.com/package/xlsx#output-type) and [type](https://www.npmjs.com/package/xlsx#output-type) are necessary to run properly. Defaults are coded in, xlsx for the bookType and buffer for the type. 
+will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), described [here](https://www.npmjs.com/package/xlsx#writing-options). [BookType](https://www.npmjs.com/package/xlsx#output-type) is necessary to run properly. [Type](https://www.npmjs.com/package/xlsx#output-type) is also required, but has been hard coded to buffer type.
+The plugin will change the file type within the file according to the bookType entered.
 ##### Sample gulpfile.js
 ```
 var gulp = require('gulp')
@@ -26,7 +27,7 @@ exports.default = function() {
     .on('data', function (file) {
         console.log('Starting processing on ' + file.basename)
     })  
-    .pipe(targetSpreadsheet({bookType: "xlsx", type: "buffer"}))
+    .pipe(targetSpreadsheet({bookType: "xlsx"}))
     .on('data', function (file) {
         console.log('Done processing on ' + file.basename)
     })  
