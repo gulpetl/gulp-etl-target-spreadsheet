@@ -31,7 +31,77 @@ function runtargetSpreadSheet(callback: any) {
       log.info('gulp task complete')
       callback()
     })
+}
 
+function runTargetSSHTML(callback: any){
+  log.info('gulp task starting for ' + PLUGIN_NAME)
+
+  return gulp.src('../testdata/*.ndjson',{buffer:true})
+    .pipe(errorHandler(function(err:any) {
+      log.error('Error: ' + err)
+      callback(err)
+    }))
+    .on('data', function (file:Vinyl) {
+      log.info('Starting processing on ' + file.basename)
+    })    
+    .pipe(targetSpreadsheet({bookType : "html"})) 
+    .pipe(gulp.dest('../testdata/processed'))
+    .on('data', function (file:Vinyl) {
+      log.info('Finished processing on ' + file.basename)
+    })    
+    .on('end', function () {
+      log.info('gulp task complete')
+      callback()
+    })
+}
+
+function runTargetSSODS(callback: any){
+  log.info('gulp task starting for ' + PLUGIN_NAME)
+
+  return gulp.src('../testdata/*.ndjson',{buffer:true})
+    .pipe(errorHandler(function(err:any) {
+      log.error('Error: ' + err)
+      callback(err)
+    }))
+    .on('data', function (file:Vinyl) {
+      log.info('Starting processing on ' + file.basename)
+    })    
+    .pipe(targetSpreadsheet({bookType : "ods"})) 
+    .pipe(gulp.dest('../testdata/processed'))
+    .on('data', function (file:Vinyl) {
+      log.info('Finished processing on ' + file.basename)
+    })    
+    .on('end', function () {
+      log.info('gulp task complete')
+      callback()
+    })
+}
+
+function runTargetSSDBF(callback:any){
+  log.info('gulp task starting for ' + PLUGIN_NAME)
+
+  return gulp.src('../testdata/*.ndjson',{buffer:true})
+    .pipe(errorHandler(function(err:any) {
+      log.error('Error: ' + err)
+      callback(err)
+    }))
+    .on('data', function (file:Vinyl) {
+      log.info('Starting processing on ' + file.basename)
+    })    
+    .pipe(targetSpreadsheet({bookType : "dbf"}))
+    //for different file types, change the bookType above
+    //different options are detailed here https://www.npmjs.com/package/xlsx#supported-output-formats
+    .pipe(gulp.dest('../testdata/processed'))
+    .on('data', function (file:Vinyl) {
+      log.info('Finished processing on ' + file.basename)
+    })    
+    .on('end', function () {
+      log.info('gulp task complete')
+      callback()
+    })
 }
 
 exports.default = gulp.series(runtargetSpreadSheet)
+exports.runHtml = gulp.series(runTargetSSHTML)
+exports.runOds = gulp.series(runTargetSSODS)
+exports.runDbf = gulp.series(runTargetSSDBF)
