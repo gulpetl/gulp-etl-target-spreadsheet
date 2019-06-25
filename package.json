@@ -1,8 +1,8 @@
 {
-  "name": "gulp-etl-target-csv",
-  "version": "1.0.3",
-  "repository": "https://github.com/gulpetl/gulp-etl-target-csv",
-  "description": "Convert CSV files to JSON compatible with gulp-etl",
+  "name": "gulp-etl-target-spreadsheet",
+  "version": "1.0.0",
+  "repository": "https://github.com/gulpetl/gulp-etl-target-spreadsheet",
+  "description": "Convert ndjson files to spreadsheets compatible with gulp-etl",
   "main": "dist/js/plugin.js",
   "typings": "dist/types/plugin.d.ts",
   "files": [
@@ -17,7 +17,16 @@
   "keywords": [
     "gulpplugin",
     "csv",
-    "gulp-etl"
+    "spreadsheets",
+    "excel",
+    "xls",
+    "xlsx",
+    "ods",
+    "dbf",
+    "gulp-etl",
+    "ndjson",
+    "html",
+    "office"
   ],
   "homepage": "https://gulpetl.com",
   "dependencies": {
@@ -29,7 +38,8 @@
     "plugin-error": "^1.0.1",
     "split2": "^3.1.1",
     "through2": "^3.0.1",
-    "vinyl": "^2.2.0"
+    "vinyl": "^2.2.0",
+    "xlsx": "^0.14.3"
   },
   "devDependencies": {
     "@types/del": "^4.0.0",

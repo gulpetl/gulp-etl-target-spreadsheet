@@ -1,8 +1,7 @@
 # gulp-etl-target-spreadsheet #
 
-*(this plugin is being developed from **gulp-etl-target-csv**. The original readme from [gulp-etl-target-csv](https://github.com/gulpetl/gulp-etl-target-csv) is below)*
+This plugin creates spreadsheet files from **gulp-etl** **Message Stream** files; originally adapted from the [gulp-etl-handlelines](https://github.com/gulpetl/gulp-etl-handlelines) model plugin. It is a **gulp-etl** wrapper for [xlsx](https://www.npmjs.com/package/xlsx).
 
-This plugin creates CSV files from **gulp-etl** **Message Stream** files; originally adapted from the [gulp-etl-handlelines](https://github.com/gulpetl/gulp-etl-handlelines) model plugin. It is a **gulp-etl** wrapper for [csv-stringify](https://csv.js.org/stringify/).
 
 This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp](https://gulpjs.com/) plugin. **gulp-etl** plugins work with [ndjson](http://ndjson.org/) data streams/files which we call **Message Streams** and which are compliant with the [Singer specification](https://github.com/singer-io/getting-started/blob/master/docs/SPEC.md#output). Message Streams look like this:
 
@@ -17,21 +16,23 @@ This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp
 
 ### Usage
 **gulp-etl** plugins accept a configObj as the first parameter; the configObj
-will contain any info the plugin needs. For this plugin the configObj is the "Options" object for [csv-stringify](https://csv.js.org/stringify/), described [here](https://csv.js.org/stringify/options/).
+will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), described [here](https://www.npmjs.com/package/xlsx#writing-options). [BookType](https://www.npmjs.com/package/xlsx#output-type) is necessary to run properly. [Type](https://www.npmjs.com/package/xlsx#output-type) is also required, but has been hard coded to buffer type.
+The plugin will change the file type within the file according to the bookType entered.
 
+When converting to dbf files an issue become apparent that the output was not able to be opened properly by excel. As well when using an online dbf viewer, any numbers stored as numerics were not being expressed with their original values, but numbers stored as strings were.
+
+**Warning:** If the input file was tapped from a file type that has multiple sheets, and the bookType chose only allows for single sheets, the plugin will only export the first sheet. A table for bookTypes and their capablitily of handling multiple sheets is described [here](https://www.npmjs.com/package/xlsx#output-type).
 ##### Sample gulpfile.js
 ```
 var gulp = require('gulp')
-var rename = require('gulp-rename')
-var targetCsv = require('gulp-etl-target-csv').targetCsv
+var targetSpreadsheet = require('gulp-etl-target-spreadsheet').targetSpreadSheet
 
 exports.default = function() {
     return gulp.src('data/*.ndjson')
     .on('data', function (file) {
         console.log('Starting processing on ' + file.basename)
     })  
-    .pipe(targetCsv({header:true}))
-    .pipe(rename({ extname: ".csv" })) // rename to *.csv
+    .pipe(targetSpreadsheet({bookType: "xlsx"}))
     .on('data', function (file) {
         console.log('Done processing on ' + file.basename)
     })  
