@@ -6,7 +6,7 @@ const PLUGIN_NAME = module.exports.name;
 import Vinyl = require('vinyl') 
 import * as loglevel from 'loglevel'
 const log = loglevel.getLogger('gulpfile')
-log.setLevel((process.env.DEBUG_LEVEL || 'warn') as log.LogLevelDesc)
+log.setLevel((process.env.DEBUG_LEVEL || 'warn') as loglevel.LogLevelDesc)
 // if needed, you can control the plugin's logging level separately from 'gulpfile' logging above
 // const pluginLog = loglevel.getLogger(PLUGIN_NAME)
 // pluginLog.setLevel('debug')

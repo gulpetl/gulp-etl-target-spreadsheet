@@ -14,7 +14,7 @@ function targetSpreadsheet(configObj) {
         configObj = {};
     if (!configObj.bookType)
         configObj.bookType = "xlsx";
-    configObj.type = "array";
+    configObj.type = "buffer";
     const strm = through2.obj(function (file, encoding, callback) {
         let returnErr = null;
         if (file.isNull() || returnErr) {
