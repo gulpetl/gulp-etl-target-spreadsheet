@@ -2,7 +2,7 @@
   "name": "gulp-etl-target-spreadsheet",
   "version": "1.0.1",
   "repository": "https://github.com/gulpetl/gulp-etl-target-spreadsheet",
-  "description": "Convert ndjson files to spreadsheets compatible with gulp-etl",
+  "description": "Compose spreadsheets (XLS, XLSX, ODS, DBF, CSV, etc) from gulp-etl's Message Stream JSON format",
   "main": "dist/js/plugin.js",
   "typings": "dist/types/plugin.d.ts",
   "files": [
@@ -36,7 +36,7 @@
     "csv-stringify": "^5.3.0",
     "from2": "^2.3.0",
     "gulp-error-handle": "^1.0.1",
-    "loglevel": "^1.6.1",
+    "loglevel": "^1.6.3",
     "pkginfo": "^0.4.1",
     "plugin-error": "^1.0.1",
     "replace-ext": "^1.0.0",
@@ -49,18 +49,18 @@
     "@types/del": "^4.0.0",
     "@types/gulp-rename": "0.0.33",
     "@types/jest": "^23.3.14",
-    "@types/loglevel": "^1.5.4",
-    "@types/node": "^10.14.6",
+    "@types/loglevel": "^1.6.3",
+    "@types/node": "^10.14.13",
     "@types/vinyl": "^2.0.3",
     "@types/vinyl-paths": "0.0.31",
-    "gulp": "^4.0.1",
+    "gulp": "^4.0.2",
     "gulp-rename": "^1.4.0",
-    "jest": "^24.7.1",
-    "jest-spec-reporter": "^1.0.5",
+    "jest": "^24.8.0",
+    "jest-spec-reporter": "^1.0.6",
     "rimraf": "^2.6.3",
-    "stream-transform": "^2.0.0",
+    "stream-transform": "^2.0.1",
     "ts-jest": "^24.0.2",
     "ts-node": "^7.0.1",
-    "typescript": "^3.4.5"
+    "typescript": "^3.5.3"
   }
 }
