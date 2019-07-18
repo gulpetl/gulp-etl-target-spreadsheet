@@ -16,16 +16,14 @@ This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp
 
 ### Usage
 **gulp-etl** plugins accept a configObj as the first parameter; the configObj
-will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), which is described [here](https://www.npmjs.com/package/xlsx#writing-options). [bookType](https://www.npmjs.com/package/xlsx#supported-output-formats) is required; it specifies the type of the exported spreadsheet.
+will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), described [here](https://www.npmjs.com/package/xlsx#writing-options). [BookType](https://www.npmjs.com/package/xlsx#output-type) is necessary to run properly. [Type](https://www.npmjs.com/package/xlsx#output-type) is also required, but has been hard coded to buffer type.
+The plugin will change the file type within the file according to the bookType entered.
 
-Note that if the Message Stream contains multiple sheets and the selected bookType only allows for single sheets, the plugin will only export the first sheet. Check [the list](https://www.npmjs.com/package/xlsx#supported-output-formats) of supported spreadsheet types and their capabilities.
+When converting to dbf files an issue become apparent that the output was not able to be opened properly by excel. As well when using an online dbf viewer, any numbers stored as numerics were not being expressed with their original values, but numbers stored as strings were.
 
-**Note on DBF handling:** Some DBF exports produced by this plugin do not open properly in Excel; it isn't certain if this is an Excel limitation. We have also observed some inconsistencies on cells with numeric values viewed in some tools, while strings appear to reproduce correctly. This may be due to differences in DBF version support between various tools.
-
+**Warning:** If the input file was tapped from a file type that has multiple sheets, and the bookType chose only allows for single sheets, the plugin will only export the first sheet. A table for bookTypes and their capablitily of handling multiple sheets is described [here](https://www.npmjs.com/package/xlsx#output-type).
 ##### Sample gulpfile.js
 ```
-/* Load a pre-created message stream from a file and export to an XSLX spreadsheet */
-
 var gulp = require('gulp')
 var targetSpreadsheet = require('gulp-etl-target-spreadsheet').targetSpreadSheet
 

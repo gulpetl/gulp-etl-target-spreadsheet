@@ -7,7 +7,7 @@ const pkginfo = require('pkginfo')(module); // project package.json info into mo
 const PLUGIN_NAME = module.exports.name;
 import * as loglevel from 'loglevel'
 const log = loglevel.getLogger(PLUGIN_NAME) // get a logger instance based on the project name
-log.setLevel((process.env.DEBUG_LEVEL || 'warn') as loglevel.LogLevelDesc)
+log.setLevel((process.env.DEBUG_LEVEL || 'warn') as log.LogLevelDesc)
 
 export function targetSpreadsheet(configObj:any){
     if (!configObj) configObj = {}
