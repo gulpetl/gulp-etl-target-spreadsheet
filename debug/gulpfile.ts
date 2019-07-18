@@ -6,10 +6,13 @@ const PLUGIN_NAME = module.exports.name;
 import Vinyl = require("vinyl");
 import * as loglevel from "loglevel";
 const log = loglevel.getLogger("gulpfile");
-log.setLevel((process.env.DEBUG_LEVEL || "warn") as log.LogLevelDesc);
+log.setLevel((process.env.DEBUG_LEVEL || "warn") as loglevel.LogLevelDesc);
 // if needed, you can control the plugin's logging level separately from 'gulpfile' logging above
 // const pluginLog = loglevel.getLogger(PLUGIN_NAME)
 // pluginLog.setLevel('debug')
+
+let bookType
+let sheetOpts = {}
 
 function runtargetSpreadSheet(callback: any) {
     log.info("gulp task starting for " + PLUGIN_NAME);
@@ -22,7 +25,7 @@ function runtargetSpreadSheet(callback: any) {
         .on("data", function(file: Vinyl) {
             log.info("Starting processing on " + file.basename);
         })
-        .pipe(targetSpreadsheet({ bookType: "xlsx" }))
+        .pipe(targetSpreadsheet({ bookType: bookType }, sheetOpts))
         .pipe(gulp.dest("../testdata/processed"))
         .on("data", function(file: Vinyl) {
             log.info("Finished processing on " + file.basename);
@@ -33,53 +36,25 @@ function runtargetSpreadSheet(callback: any) {
         });
 }
 
-function runTargetSSHTML(callback: any) {
-    log.info("gulp task starting for " + PLUGIN_NAME);
-
-    return gulp
-        .src("../testdata/*.ndjson", { buffer: true })
-        .pipe(
-            errorHandler(function(err: any) {
-                log.error("Error: " + err);
-                callback(err);
-            })
-        )
-        .on("data", function(file: Vinyl) {
-            log.info("Starting processing on " + file.basename);
-        })
-        .pipe(targetSpreadsheet({ bookType: "html" }, {skipHeader: true}))
-        .pipe(gulp.dest("../testdata/processed"))
-        .on("data", function(file: Vinyl) {
-            log.info("Finished processing on " + file.basename);
-        })
-        .on("end", function() {
-            log.info("gulp task complete");
-            callback();
-        });
+function targetXLSX(callback: any){
+    bookType = "xlsx"
+    callback()
 }
 
-function runTargetSSODS(callback: any) {
-    log.info("gulp task starting for " + PLUGIN_NAME);
+function targetHtml(callback: any){
+    bookType = "html"
+    callback()
+}
 
-    return gulp.src("../testdata/*.ndjson", { buffer: true })
-        .pipe(errorHandler(function(err: any) {
-            log.error("Error: " + err);
-            callback(err);
-        }))
-        .on("data", function(file: Vinyl) {
-            log.info("Starting processing on " + file.basename);
-        })
-        .pipe(targetSpreadsheet({ bookType: "ods" }))
-        .pipe(gulp.dest("../testdata/processed"))
-        .on("data", function(file: Vinyl) {
-            log.info("Finished processing on " + file.basename);
-        })
-        .on("end", function() {
-            log.info("gulp task complete");
-            callback();
-        });
+function targetODS(callback: any){
+    bookType = "ods"
+    callback()
+}
+
+function sheetOpt(callback: any){
+    sheetOpts = {skipHeader : true}
 }
 
 exports.default = gulp.series(runtargetSpreadSheet);
-exports.runHtml = gulp.series(runTargetSSHTML);
-exports.runOds = gulp.series(runTargetSSODS);
+exports.runHtml = gulp.series(targetHtml, runtargetSpreadSheet, sheetOpt);
+exports.runOds = gulp.series(targetODS, runtargetSpreadSheet);
