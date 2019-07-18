@@ -15,32 +15,36 @@ This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp
 ```
 
 ### Usage
-**gulp-etl** plugins accept a configObj as the first parameter; the configObj
-will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), described [here](https://www.npmjs.com/package/xlsx#writing-options). [BookType](https://www.npmjs.com/package/xlsx#output-type) is necessary to run properly. [Type](https://www.npmjs.com/package/xlsx#output-type) is also required, but has been hard coded to buffer type.
+**gulp-etl** plugins accept a configObj as the first parameter, the second parameter is sheetOpt. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), described [here](https://www.npmjs.com/package/xlsx#writing-options). [BookType](https://www.npmjs.com/package/xlsx#output-type) is necessary to run properly. [Type](https://www.npmjs.com/package/xlsx#output-type) is also required, but has been hard coded to buffer type. The sheetOpt parameter is the Array of objects input described [here](https://docs.sheetjs.com/#array-of-objects-input).
 The plugin will change the file type within the file according to the bookType entered.
 
-When converting to dbf files an issue become apparent that the output was not able to be opened properly by excel. As well when using an online dbf viewer, any numbers stored as numerics were not being expressed with their original values, but numbers stored as strings were.
+Currently this plugin has only been tested with raw data in the input.
+
+When converting to dbf files an issue become apparent that the output was not able to be opened properly by excel. As well when using an online dbf viewer, any numbers stored as numerics were not being expressed with their original values, but numbers stored as strings were. However xlsx does handle what it outputs. This was tested by taking the output of target-spreadsheets and giving it as an input to gulp-etl-tap-spreadsheets.
 
 **Warning:** If the input file was tapped from a file type that has multiple sheets, and the bookType chose only allows for single sheets, the plugin will only export the first sheet. A table for bookTypes and their capablitily of handling multiple sheets is described [here](https://www.npmjs.com/package/xlsx#output-type).
-##### Sample gulpfile.js
-```
-var gulp = require('gulp')
-var targetSpreadsheet = require('gulp-etl-target-spreadsheet').targetSpreadSheet
 
-exports.default = function() {
-    return gulp.src('data/*.ndjson')
-    .on('data', function (file) {
-        console.log('Starting processing on ' + file.basename)
-    })  
-    .pipe(targetSpreadsheet({bookType: "xlsx"}))
-    .on('data', function (file) {
-        console.log('Done processing on ' + file.basename)
-    })  
-    .pipe(gulp.dest('data/'));
+
+##### Sample gulpfile.js
+<!-- embedme gulpfile.js -->
+
+```js
+var gulp = require("gulp");
+var targetSpreadsheet = require("./src/plugin").targetSpreadsheet;
+
+function runtargetSpreadSheet(callback) {
+    return gulp
+        .src("../testdata/*.ndjson", { buffer: true })
+        .pipe(targetSpreadsheet({ bookType: "xlsx" }))
+        .pipe(gulp.dest("../testdata/processed"));
 }
+
+exports["default"] = gulp.series(runtargetSpreadSheet);
+
 ```
+
 ### Quick Start for Coding on This Plugin
-* Dependencies: 
+* Dependencies:
     * [git](https://git-scm.com/downloads)
     * [nodejs](https://nodejs.org/en/download/releases/) - At least v6.3 (6.9 for Windows) required for TypeScript debugging
     * npm (installs with Node)
@@ -49,6 +53,7 @@ exports.default = function() {
 * Debug: with [VScode](https://code.visualstudio.com/download) use `Open Folder` to open the project folder, then hit F5 to debug. This runs without compiling to javascript using [ts-node](https://www.npmjs.com/package/ts-node)
 * Test: `npm test` or `npm t`
 * Compile to javascript: `npm run build`
+* Default Task: `npm run defaultTask`
 
 ### Testing
 
