@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "GulpTester",
+            "name": "Target Xlsx",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
@@ -18,8 +18,8 @@
             "console": "internalConsole",
             "env": {"DEBUG_LEVEL":"info"}
         },
-        {        
-            "name": "GulpTester Debug",
+        {
+            "name": "Target Xlsx Debug",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
@@ -33,7 +33,7 @@
             "env": {"DEBUG_LEVEL":"debug"}
         },
         {
-            "name" : "Gulp HTML",
+            "name" : "Target HTML",
             "type" : "node",
             "request" : "launch",
             "program" : "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
@@ -47,26 +47,12 @@
             "env": {"DEBUG_LEVEL":"info"}
         },
         {
-            "name" : "Gulp ODS",
+            "name" : "Target ODS",
             "type" : "node",
             "request" : "launch",
             "program" : "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
             "stopOnEntry" : false,
             "args" : ["--gulpfile", "./debug/gulpfile.ts", "runOds"],
-            "cwd" : "${workspaceRoot}",
-            "runtimeArgs" : [
-                "--nolazy", "-r", "ts-node/register"
-            ],
-            "console": "internalConsole",
-            "env": {"DEBUG_LEVEL":"info"}
-        },
-        {
-            "name" : "Gulp DBF",
-            "type" : "node",
-            "request" : "launch",
-            "program" : "${workspaceRoot}/node_modules/gulp/bin/gulp.js",
-            "stopOnEntry" : false,
-            "args" : ["--gulpfile", "./debug/gulpfile.ts", "runDbf"],
             "cwd" : "${workspaceRoot}",
             "runtimeArgs" : [
                 "--nolazy", "-r", "ts-node/register"

@@ -15,34 +15,36 @@ This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp
 ```
 
 ### Usage
-**gulp-etl** plugins accept a configObj as the first parameter; the configObj
-will contain any info the plugin needs. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), which is described [here](https://www.npmjs.com/package/xlsx#writing-options). [bookType](https://www.npmjs.com/package/xlsx#supported-output-formats) is required; it specifies the type of the exported spreadsheet.
+**gulp-etl** plugins accept a configObj as the first parameter, the second parameter is sheetOpt. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), which is described [here](https://www.npmjs.com/package/xlsx#writing-options). [BookType](https://www.npmjs.com/package/xlsx#output-type) is required; it speficies the type of the exported spreadsheet. The sheetOpt parameter is the Array of objects input described [here](https://docs.sheetjs.com/#array-of-objects-input).
+The plugin will change the file type within the file according to the bookType entered.
+
+Currently this plugin has only been tested with raw data in the input.
 
 Note that if the Message Stream contains multiple sheets and the selected bookType only allows for single sheets, the plugin will only export the first sheet. Check [the list](https://www.npmjs.com/package/xlsx#supported-output-formats) of supported spreadsheet types and their capabilities.
 
 **Note on DBF handling:** Some DBF exports produced by this plugin do not open properly in Excel; it isn't certain if this is an Excel limitation. We have also observed some inconsistencies on cells with numeric values viewed in some tools, while strings appear to reproduce correctly. This may be due to differences in DBF version support between various tools.
 
 ##### Sample gulpfile.js
-```
-/* Load a pre-created message stream from a file and export to an XSLX spreadsheet */
+<!-- embedme gulpfile.js -->
 
-var gulp = require('gulp')
-var targetSpreadsheet = require('gulp-etl-target-spreadsheet').targetSpreadSheet
+```js
+/* Load a pre-created message stream from a file and export to an XLSX spreadsheet */
+var gulp = require("gulp");
+var targetSpreadsheet = require("./src/plugin").targetSpreadsheet;
 
-exports.default = function() {
-    return gulp.src('data/*.ndjson')
-    .on('data', function (file) {
-        console.log('Starting processing on ' + file.basename)
-    })  
-    .pipe(targetSpreadsheet({bookType: "xlsx"}))
-    .on('data', function (file) {
-        console.log('Done processing on ' + file.basename)
-    })  
-    .pipe(gulp.dest('data/'));
+function runtargetSpreadSheet(callback) {
+    return gulp
+        .src("../testdata/*.ndjson", { buffer: true })
+        .pipe(targetSpreadsheet({ bookType: "xlsx" }))
+        .pipe(gulp.dest("../testdata/processed"));
 }
+
+exports["default"] = gulp.series(runtargetSpreadSheet);
+
 ```
+
 ### Quick Start for Coding on This Plugin
-* Dependencies: 
+* Dependencies:
     * [git](https://git-scm.com/downloads)
     * [nodejs](https://nodejs.org/en/download/releases/) - At least v6.3 (6.9 for Windows) required for TypeScript debugging
     * npm (installs with Node)
@@ -51,6 +53,7 @@ exports.default = function() {
 * Debug: with [VScode](https://code.visualstudio.com/download) use `Open Folder` to open the project folder, then hit F5 to debug. This runs without compiling to javascript using [ts-node](https://www.npmjs.com/package/ts-node)
 * Test: `npm test` or `npm t`
 * Compile to javascript: `npm run build`
+* Default Task: `npm run defaultTask`
 
 ### Testing
 
