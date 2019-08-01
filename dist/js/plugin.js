@@ -1,15 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const through2 = require('through2');
-const split = require('split2');
+const through2 = require("through2");
 const XLSX = require("xlsx");
-var replaceExt = require('replace-ext');
+var replaceExt = require("replace-ext");
 const PluginError = require("plugin-error");
-const pkginfo = require('pkginfo')(module); // project package.json info into module.exports
+require("pkginfo")(module); // project package.json info into module.exports
 const PLUGIN_NAME = module.exports.name;
 const loglevel = require("loglevel");
 const log = loglevel.getLogger(PLUGIN_NAME); // get a logger instance based on the project name
-log.setLevel((process.env.DEBUG_LEVEL || 'warn'));
+log.setLevel((process.env.DEBUG_LEVEL || "warn"));
 function targetSpreadsheet(configObj, sheetOpt) {
     if (!configObj)
         configObj = {};
@@ -23,10 +22,10 @@ function targetSpreadsheet(configObj, sheetOpt) {
             return callback(returnErr, file);
         }
         else if (file.isStream()) {
-            throw new PluginError(PLUGIN_NAME, 'Does not support streaming');
+            throw new PluginError(PLUGIN_NAME, "Does not support streaming");
         }
         else if (file.isBuffer()) {
-            let linesArr = file.contents.toString().split('\n');
+            let linesArr = file.contents.toString().split("\n");
             let resultArr = [];
             let tempObj;
             let streamNames = [];
@@ -35,7 +34,7 @@ function targetSpreadsheet(configObj, sheetOpt) {
                 let lineObj = JSON.parse(linesArr[lineIdx]);
                 tempObj = lineObj.record;
                 let stream = lineObj.stream;
-                if (!(streamNames.includes(stream))) {
+                if (!streamNames.includes(stream)) {
                     streamNames.push(stream);
                     resultArr.push([]);
                 }
@@ -71,7 +70,7 @@ function targetSpreadsheet(configObj, sheetOpt) {
             catch (err) {
                 returnErr = new PluginError(PLUGIN_NAME, err);
             }
-            log.debug('calling callback');
+            log.debug("calling callback");
             callback(returnErr, file);
         }
     });

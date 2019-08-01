@@ -18,8 +18,6 @@ This is a **[gulp-etl](https://gulpetl.com/)** plugin, and as such it is a [gulp
 **gulp-etl** plugins accept a configObj as the first parameter, the second parameter is sheetOpt. For this plugin the configObj is the "Writing Options" object for [xlsx](https://www.npmjs.com/package/xlsx), which is described [here](https://www.npmjs.com/package/xlsx#writing-options). [BookType](https://www.npmjs.com/package/xlsx#output-type) is required; it speficies the type of the exported spreadsheet. The sheetOpt parameter is the Array of objects input described [here](https://docs.sheetjs.com/#array-of-objects-input).
 The plugin will change the file type within the file according to the bookType entered.
 
-Currently this plugin has only been tested with raw data in the input.
-
 Note that if the Message Stream contains multiple sheets and the selected bookType only allows for single sheets, the plugin will only export the first sheet. Check [the list](https://www.npmjs.com/package/xlsx#supported-output-formats) of supported spreadsheet types and their capabilities.
 
 **Note on DBF handling:** Some DBF exports produced by this plugin do not open properly in Excel; it isn't certain if this is an Excel limitation. We have also observed some inconsistencies on cells with numeric values viewed in some tools, while strings appear to reproduce correctly. This may be due to differences in DBF version support between various tools.
